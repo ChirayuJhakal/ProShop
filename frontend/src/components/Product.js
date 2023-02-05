@@ -1,21 +1,21 @@
 import React from 'react';
 import { Card, CardImg } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Rating from './Rating';
 
 const Product = ({ product }) => {
   return (
     <Card className='my-3 p-3 rounded'>
-      <NavLink to={`/product/${product._id}`}>
+      <Link to={`/product/${product._id}`}>
         <CardImg src={product.image} variant='top' />
-      </NavLink>
+      </Link>
 
       <Card.Body>
-        <a href={`/product/${product._id}`}>
+        <Link to={`/product/${product._id}`}>
           <Card.Title as='div'>
             <strong>{product.name}</strong>
           </Card.Title>
-        </a>
+        </Link>
 
         <Card.Text as='div'>
           <div className='my-3'>
