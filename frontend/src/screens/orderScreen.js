@@ -1,12 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { getOrderDetails } from '../actions/orderActions';
+import { loadStripe } from '@stripe/stripe-js/pure';
+import StripeCheckout from '../components/StripeCheckout';
+import axios from 'axios';
 
 const OrderScreen = () => {
+  const [stripe, setStripe] = useState(null);
+
   const params = useParams();
   const orderId = params.id;
   const dispatch = useDispatch();
@@ -28,6 +33,18 @@ const OrderScreen = () => {
   }
 
   useEffect(() => {
+    const addStripeScript = async () => {
+      const { data: clientId } = await axios.get('/api/stripe/key');
+      const stripeObj = await loadStripe(clientId);
+      setStripe(stripeObj);
+    };
+
+    if (order.paymentMethod === 'stripe') {
+      if (!stripe) {
+        addStripeScript();
+      }
+    }
+
     if (!order || order._id !== orderId) {
       dispatch(getOrderDetails(orderId));
     }
@@ -143,6 +160,7 @@ const OrderScreen = () => {
                   <Col>${order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              <StripeCheckout />
             </ListGroup>
           </Card>
         </Col>
